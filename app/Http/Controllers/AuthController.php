@@ -4,21 +4,22 @@ namespace App\Http\Controllers;
 
 use App\Models\User;
 use Illuminate\Http\Request;
+use Illuminate\Support\Facades\Auth;
 use Illuminate\Support\Facades\Hash;
 
 class AuthController extends Controller
 {
     public function login(Request $request){
         $validatedData = $request->validate([
-            'email' => 'required|email',
+            'username' => 'required',
             'password' => 'required|min:8',
         ]);
 
         if (Auth::attempt($validatedData)) {
-            $user = Auth::user();
-
-            Auth::login($user);
             $request->session()->regenerate();
+            return response()->json([
+                'message' => 'Logged in successfully',
+            ], 200);
         }
 
         return response()->json(['error' => 'Unauthorized'], 401);
