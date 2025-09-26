@@ -14,11 +14,12 @@ class AuthController extends Controller
             'username' => 'required',
             'password' => 'required|min:8',
         ]);
-
-        if (Auth::attempt($validatedData)) {
+        $user = Auth::attempt($validatedData);
+        if ($user) {
             $request->session()->regenerate();
             return response()->json([
                 'message' => 'Logged in successfully',
+                'user' => Auth::user()
             ], 200);
         }
 
@@ -38,6 +39,13 @@ class AuthController extends Controller
             'password' => Hash::make($validatedData['password']),
         ]);
 
+        return response()->json([
+            'user' => $user,
+        ], 200);
+    }
+
+    public function who(Request $request){
+        $user = Auth::user();
         return response()->json([
             'user' => $user,
         ], 200);
